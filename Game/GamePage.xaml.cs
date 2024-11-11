@@ -2,15 +2,15 @@
 
 public partial class GamePage : ContentPage
 {
-    private readonly List<Letter> letters;
-    private readonly List<Letter> userLetters;
-    private int selectedLetterCount = 0;
+    private readonly List<Letter> _letters;
+    private readonly List<Letter> _userLetters;
+    private int _selectedLetterCount;
 
     public GamePage()
     {
         InitializeComponent();
-        letters = LetterInitializer.InitializeLetters();
-        userLetters = LetterInitializer.DrawRandomLetters(letters, 7);
+        _letters = LetterInitializer.InitializeLetters();
+        _userLetters = LetterInitializer.DrawRandomLetters(_letters, 7);
         var totalTiles = GetTotalTiles();
         //TotalTilesLabel.Text = $"Total Tiles: {totalTiles}";
         DisplayUserLetters();
@@ -18,13 +18,13 @@ public partial class GamePage : ContentPage
 
     private int GetTotalTiles()
     {
-        return letters.Sum(letter => letter.Quantity);
+        return _letters.Sum(letter => letter.Quantity);
     }
 
     private void DisplayUserLetters()
     {
         LettersStackLayout.Children.Clear();
-        foreach (var letter in userLetters)
+        foreach (var letter in _userLetters)
         {
             var button = new Button
             {
@@ -50,7 +50,7 @@ public partial class GamePage : ContentPage
             SelectedLettersGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             // Set the column for the button
-            Grid.SetColumn(button, selectedLetterCount);
+            Grid.SetColumn(button, _selectedLetterCount);
 
             // Animate the button
             await button.TranslateTo(0, -50, 250, Easing.CubicInOut);
@@ -59,7 +59,7 @@ public partial class GamePage : ContentPage
             button.Clicked -= OnLetterButtonClicked;
             button.Clicked += OnSelectedLetterButtonClicked;
 
-            selectedLetterCount++;
+            _selectedLetterCount++;
         }
     }
 
@@ -68,7 +68,7 @@ public partial class GamePage : ContentPage
         if (sender is Button button)
         {
             // Get the column index of the button
-            int columnIndex = Grid.GetColumn(button);
+            var columnIndex = Grid.GetColumn(button);
 
             SelectedLettersGrid.Children.Remove(button);
             LettersStackLayout.Children.Add(button);
@@ -79,15 +79,12 @@ public partial class GamePage : ContentPage
             // Update the column index for remaining buttons
             foreach (var child in SelectedLettersGrid.Children)
             {
-                int currentColumn = Grid.GetColumn((BindableObject)child);
-                if (currentColumn > columnIndex)
-                {
-                    Grid.SetColumn((BindableObject)child, currentColumn - 1);
-                }
+                var currentColumn = Grid.GetColumn((BindableObject)child);
+                if (currentColumn > columnIndex) Grid.SetColumn((BindableObject)child, currentColumn - 1);
             }
 
             // Reset the column count
-            selectedLetterCount--;
+            _selectedLetterCount--;
 
             // Change the click event back to handle selecting the button
             button.Clicked -= OnSelectedLetterButtonClicked;

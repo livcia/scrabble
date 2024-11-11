@@ -13,11 +13,13 @@
 
         <Button Text="Back" HorizontalOptions="End" VerticalOptions="Start" Clicked="OnBackButtonClicked" Grid.Row="0" />
         <StackLayout VerticalOptions="FillAndExpand" Grid.Row="1">
-            <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" Margin="0,0,0,50"/>
-            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10"/>
+            <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"
+                  Margin="0,0,0,50" />
+            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand"
+                         HorizontalOptions="Center" Margin="10" />
         </StackLayout>
 
-        <Button Text="Zatwierdź" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1" />
+        <Button Text="Confirm" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1" />
 
         <Label x:Name="MessageLabel" HorizontalOptions="Center" VerticalOptions="End" Margin="10" Grid.Row="2" />
     </Grid>
