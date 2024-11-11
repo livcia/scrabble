@@ -9,6 +9,8 @@
     </ContentPage.ToolbarItems>
     <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
         <Label Text="Welcome to the Game!" FontSize="Large" />
+        <Label x:Name="TotalTilesLabel" FontSize="Medium" />
+        <Label x:Name="YourLetters" FontSize="Medium" />
         <!-- Add your game UI elements here -->
     </VerticalStackLayout>
 </ContentPage>
