@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace randomWordGenerator.Game;
+﻿namespace randomWordGenerator.Game;
 
 public partial class GamePage : ContentPage
 {
-    List<Letter> letters;
-    List<Letter> userLetters;
+    private readonly List<Letter> letters;
+    private readonly List<Letter> userLetters;
+    private int selectedLetterCount = 0;
 
     public GamePage()
     {
         InitializeComponent();
         letters = LetterInitializer.InitializeLetters();
         userLetters = LetterInitializer.DrawRandomLetters(letters, 7);
-        int totalTiles = GetTotalTiles();
-        TotalTilesLabel.Text = $"Total Tiles: {totalTiles}";
+        var totalTiles = GetTotalTiles();
+        //TotalTilesLabel.Text = $"Total Tiles: {totalTiles}";
         DisplayUserLetters();
     }
 
@@ -28,7 +23,40 @@ public partial class GamePage : ContentPage
 
     private void DisplayUserLetters()
     {
-        YourLetters.Text = string.Join(", ", userLetters.Select(letter => letter.Character));
+        LettersStackLayout.Children.Clear();
+        foreach (var letter in userLetters)
+        {
+            var button = new Button
+            {
+                Text = letter.Character.ToString(),
+                FontSize = 24,
+                WidthRequest = 50,
+                HeightRequest = 50,
+                Margin = new Thickness(5)
+            };
+            button.Clicked += OnLetterButtonClicked;
+            LettersStackLayout.Children.Add(button);
+        }
+    }
+
+    private async void OnLetterButtonClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            LettersStackLayout.Children.Remove(button);
+            SelectedLettersGrid.Children.Add(button);
+
+            // Add a new column definition for each selected letter
+            SelectedLettersGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            // Set the column for the button
+            Grid.SetColumn(button, selectedLetterCount);
+
+            // Animate the button
+            await button.TranslateTo(0, -50, 250, Easing.CubicInOut);
+
+            selectedLetterCount++;
+        }
     }
 
     private async void OnBackButtonClicked(object sender, EventArgs e)
