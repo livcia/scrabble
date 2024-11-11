@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:local="clr-namespace:randomWordGenerator"
+             x:Class="randomWordGenerator.MainPage"
+             Title="">
+
+    <ScrollView>
+        <VerticalStackLayout VerticalOptions="Center">
+            <Button
+                Text="START"
+                HorizontalOptions="Center"
+                HeightRequest="50"
+                WidthRequest="500"
+                Margin="0,10"
+                BorderColor="#FF300A1D"
+                BorderWidth="5"/>
+
+            <Grid HorizontalOptions="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+                    x:Name="settings"
+                    Text="USTAWIENIA"
+                    HeightRequest="50"
+                    WidthRequest="450"
+                    Margin="10,10"
+                    BorderColor="#300A1D"
+                    BorderWidth="5"
+                    Clicked="OnSettingsButtonClicked" />
+
+                <ImageButton
+                    x:Name="MusicIcon"
+                    Grid.Column="1"
+                    Source="unmute.png"
+                    HeightRequest="50"
+                    WidthRequest="50"
+                    BackgroundColor="Transparent"
+                    Margin="0,10"
+                    Clicked="ChangeMusic" />
+            </Grid>
+            <toolkit:MediaElement
+                x:Name="media_Element"
+                IsVisible="False"
+                Source="embed://sample.mp3"
+                ShouldAutoPlay="True"
+                ShouldLoopPlayback="True"/>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
