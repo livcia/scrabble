@@ -16,7 +16,8 @@
                 WidthRequest="500"
                 Margin="0,10"
                 BorderColor="#FF300A1D"
-                BorderWidth="5"/>
+                BorderWidth="5"
+                Clicked ="OnStartButtonClicked"/>
 
             <Grid HorizontalOptions="Center">
                 <Grid.ColumnDefinitions>

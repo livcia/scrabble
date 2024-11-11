@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Xaml;
+using randomWordGenerator.Game;
 namespace randomWordGenerator
 {
     public partial class MainPage : ContentPage
@@ -10,6 +11,10 @@ namespace randomWordGenerator
         {
             InitializeComponent();
             media_Element.Play(); //don't work
+        }
+        private async void OnStartButtonClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new GamePage());
         }
         private void OnSettingsButtonClicked(object sender, EventArgs e)
         {
