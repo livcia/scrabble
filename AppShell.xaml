@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:randomWordGenerator"
+    xmlns:game="clr-namespace:randomWordGenerator.Game"
     Shell.FlyoutBehavior="Disabled"
     Title="randomWordGenerator">
 
@@ -11,5 +12,6 @@
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+    <ShellContent Title="Game" ContentTemplate="{DataTemplate game:GamePage}" />
 
 </Shell>

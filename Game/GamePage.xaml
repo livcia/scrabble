@@ -2,30 +2,24 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="randomWordGenerator.Game.GamePage"
-             Title="Game">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Back" Clicked="OnBackButtonClicked" Order="Primary" Priority="0" />
-    </ContentPage.ToolbarItems>
-    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
-        <HorizontalStackLayout>
-           
-            <Grid x:Name="SelectedLettersGrid" HorizontalOptions="Center">
-                <Grid.ColumnDefinitions>
-                    <!-- Initial column definitions can be empty -->
-                </Grid.ColumnDefinitions>
-            </Grid>
-        </HorizontalStackLayout>
+             x:Class="randomWordGenerator.Game.GamePage">
 
-        <HorizontalStackLayout HorizontalOptions="Center">
-            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <Button Text="Zatwierdź" BackgroundColor="Green" WidthRequest="100"/>
-                <Label x:Name="TotalTilesLabel" FontSize="Medium" />
-                <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" />
-            </VerticalStackLayout>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        </HorizontalStackLayout>
+        <Button Text="Back" HorizontalOptions="End" VerticalOptions="Start" Clicked="OnBackButtonClicked" Grid.Row="0" />
+        <StackLayout VerticalOptions="FillAndExpand" Grid.Row="1">
+            <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" Margin="0,0,0,50"/>
+            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10"/>
+        </StackLayout>
 
-    </VerticalStackLayout>
-   
+        <Button Text="Zatwierdź" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1" />
+
+        <Label x:Name="MessageLabel" HorizontalOptions="Center" VerticalOptions="End" Margin="10" Grid.Row="2" />
+    </Grid>
+
 </ContentPage>

@@ -39,7 +39,7 @@ public partial class GamePage : ContentPage
         }
     }
 
-    private async void OnLetterButtonClicked(object sender, EventArgs e)
+    private async void OnLetterButtonClicked(object? sender, EventArgs e)
     {
         if (sender is Button button)
         {
@@ -55,7 +55,46 @@ public partial class GamePage : ContentPage
             // Animate the button
             await button.TranslateTo(0, -50, 250, Easing.CubicInOut);
 
+            // Change the click event to handle returning the button
+            button.Clicked -= OnLetterButtonClicked;
+            button.Clicked += OnSelectedLetterButtonClicked;
+
             selectedLetterCount++;
+        }
+    }
+
+    private async void OnSelectedLetterButtonClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            // Get the column index of the button
+            int columnIndex = Grid.GetColumn(button);
+
+            SelectedLettersGrid.Children.Remove(button);
+            LettersStackLayout.Children.Add(button);
+
+            // Remove the column definition for the returned letter
+            SelectedLettersGrid.ColumnDefinitions.RemoveAt(columnIndex);
+
+            // Update the column index for remaining buttons
+            foreach (var child in SelectedLettersGrid.Children)
+            {
+                int currentColumn = Grid.GetColumn((BindableObject)child);
+                if (currentColumn > columnIndex)
+                {
+                    Grid.SetColumn((BindableObject)child, currentColumn - 1);
+                }
+            }
+
+            // Reset the column count
+            selectedLetterCount--;
+
+            // Change the click event back to handle selecting the button
+            button.Clicked -= OnSelectedLetterButtonClicked;
+            button.Clicked += OnLetterButtonClicked;
+
+            // Animate the button back to its original position
+            await button.TranslateTo(0, 0, 250, Easing.CubicInOut);
         }
     }
 
