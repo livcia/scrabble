@@ -1,30 +1,35 @@
-﻿namespace randomWordGenerator.Game;
+﻿using System.Text;
+
+namespace randomWordGenerator.Game;
 
 public partial class GamePage : ContentPage
 {
-    private readonly List<Letter> _letters;
-    private readonly List<Letter> _userLetters;
-    private int _selectedLetterCount;
+    private readonly GameLogic.GameLogic gameLogic;
+    private readonly List<Letter> letters;
+    private readonly List<Letter> userLetters;
+    private bool czyUsuwanie;
+    private int selectedLetterCount;
+
 
     public GamePage()
     {
         InitializeComponent();
-        _letters = LetterInitializer.InitializeLetters();
-        _userLetters = LetterInitializer.DrawRandomLetters(_letters, 7);
+        letters = LetterInitializer.InitializeLetters();
+        userLetters = LetterInitializer.DrawRandomLetters(letters, 7);
+        gameLogic = new GameLogic.GameLogic(letters);
         var totalTiles = GetTotalTiles();
-        //TotalTilesLabel.Text = $"Total Tiles: {totalTiles}";
         DisplayUserLetters();
     }
 
     private int GetTotalTiles()
     {
-        return _letters.Sum(letter => letter.Quantity);
+        return letters.Sum(letter => letter.Quantity);
     }
 
     private void DisplayUserLetters()
     {
         LettersStackLayout.Children.Clear();
-        foreach (var letter in _userLetters)
+        foreach (var letter in userLetters)
         {
             var button = new Button
             {
@@ -43,60 +48,117 @@ public partial class GamePage : ContentPage
     {
         if (sender is Button button)
         {
-            LettersStackLayout.Children.Remove(button);
-            SelectedLettersGrid.Children.Add(button);
+            if (!czyUsuwanie)
+            {
+                LettersStackLayout.Children.Remove(button);
+                SelectedLettersGrid.Children.Add(button);
+                SelectedLettersGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            // Add a new column definition for each selected letter
-            SelectedLettersGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                Grid.SetColumn(button, selectedLetterCount);
 
-            // Set the column for the button
-            Grid.SetColumn(button, _selectedLetterCount);
+                await button.TranslateTo(0, -50, 250, Easing.CubicInOut);
 
-            // Animate the button
-            await button.TranslateTo(0, -50, 250, Easing.CubicInOut);
+                button.Clicked -= OnLetterButtonClicked;
+                button.Clicked += OnSelectedLetterButtonClicked;
 
-            // Change the click event to handle returning the button
-            button.Clicked -= OnLetterButtonClicked;
-            button.Clicked += OnSelectedLetterButtonClicked;
-
-            _selectedLetterCount++;
+                selectedLetterCount++;
+            }
+            else
+            {
+                LettersStackLayout.Children.Remove(button);
+                var btn = gameLogic.ExchangeLetter(button.Text[0]);
+                LettersStackLayout.Children.Add(btn);
+                btn.Clicked += OnLetterButtonClicked;
+                czyUsuwanie = false;
+            }
         }
     }
+
 
     private async void OnSelectedLetterButtonClicked(object? sender, EventArgs e)
     {
         if (sender is Button button)
         {
-            // Get the column index of the button
-            var columnIndex = Grid.GetColumn(button);
-
-            SelectedLettersGrid.Children.Remove(button);
-            LettersStackLayout.Children.Add(button);
-
-            // Remove the column definition for the returned letter
-            SelectedLettersGrid.ColumnDefinitions.RemoveAt(columnIndex);
-
-            // Update the column index for remaining buttons
-            foreach (var child in SelectedLettersGrid.Children)
+            if (!czyUsuwanie)
             {
-                var currentColumn = Grid.GetColumn((BindableObject)child);
-                if (currentColumn > columnIndex) Grid.SetColumn((BindableObject)child, currentColumn - 1);
+                var columnIndex = Grid.GetColumn(button);
+
+                SelectedLettersGrid.Children.Remove(button);
+                LettersStackLayout.Children.Add(button);
+
+                SelectedLettersGrid.ColumnDefinitions.RemoveAt(columnIndex);
+
+                foreach (var child in SelectedLettersGrid.Children)
+                {
+                    var currentColumn = Grid.GetColumn((BindableObject)child);
+                    if (currentColumn > columnIndex) Grid.SetColumn((BindableObject)child, currentColumn - 1);
+                }
+
+                selectedLetterCount--;
+
+                button.Clicked -= OnSelectedLetterButtonClicked;
+                button.Clicked += OnLetterButtonClicked;
+
+                await button.TranslateTo(0, 0, 250, Easing.CubicInOut);
             }
-
-            // Reset the column count
-            _selectedLetterCount--;
-
-            // Change the click event back to handle selecting the button
-            button.Clicked -= OnSelectedLetterButtonClicked;
-            button.Clicked += OnLetterButtonClicked;
-
-            // Animate the button back to its original position
-            await button.TranslateTo(0, 0, 250, Easing.CubicInOut);
+            else
+            {
+                SelectedLettersGrid.Children.Remove(button);
+                var btn = gameLogic.ExchangeLetter(button.Text[0]);
+                LettersStackLayout.Children.Add(btn);
+                btn.Clicked += OnLetterButtonClicked;
+                czyUsuwanie = false;
+            }
         }
     }
 
     private async void OnBackButtonClicked(object sender, EventArgs e)
     {
         await Navigation.PopAsync();
+    }
+
+
+    private async void OnChangeLetterClicked(object sender, EventArgs e)
+    {
+        var buttonsToMove = SelectedLettersGrid.Children.ToList();
+        foreach (var view in buttonsToMove)
+        {
+            var button = (Button)view;
+            await button.TranslateTo(0, 0, 250, Easing.CubicInOut);
+
+            SelectedLettersGrid.Children.Remove(button);
+            LettersStackLayout.Children.Add(button);
+
+            button.Clicked -= OnSelectedLetterButtonClicked;
+            button.Clicked += OnLetterButtonClicked;
+            gameLogic.AddLetterBackToList(button.Text[0]);
+        }
+        SelectedLettersGrid.ColumnDefinitions.Clear();
+        selectedLetterCount = 0;
+        czyUsuwanie = true;
+    }
+
+
+    private string GetSelectedLettersString()
+    {
+        var selectedLetters = new StringBuilder();
+        foreach (var child in SelectedLettersGrid.Children)
+            if (child is Button button)
+                selectedLetters.Append(button.Text);
+        return selectedLetters.ToString();
+    }
+
+    private async void OnConfirm(object sender, EventArgs e)
+    {
+        var selectedLettersString = GetSelectedLettersString();
+        var isWord = await gameLogic.IsWordAsync(selectedLettersString);
+        if (isWord)
+        {
+            testo.Text = "znalazlo slowo";
+        }
+        else
+        {
+            testo.Text = "NIE znalazlo slowa";
+        }
     }
 }

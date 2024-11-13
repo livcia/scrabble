@@ -17,7 +17,7 @@
                 BorderColor="#FF300A1D"
                 BorderWidth="5"
                 Clicked="OnStartButtonClicked" />
-
+            
             <Grid HorizontalOptions="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

@@ -1,4 +1,6 @@
-﻿namespace randomWordGenerator.Game;
+﻿using Microsoft.Maui.Controls;
+
+namespace randomWordGenerator.Game;
 
 public static class LetterInitializer
 {
@@ -62,5 +64,13 @@ public static class LetterInitializer
         }
 
         return drawnLetters;
+    }
+    public static Letter DrawRandomLetter(List<Letter> letters){
+        var random = new Random();
+        var index = random.Next(letters.Count);
+        var letter = letters[index];
+        letter.Quantity--;
+        if (letter.Quantity == 0) letters.RemoveAt(index);
+        return letter;
     }
 }

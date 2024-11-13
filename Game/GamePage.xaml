@@ -12,14 +12,16 @@
         </Grid.RowDefinitions>
 
         <Button Text="Back" HorizontalOptions="End" VerticalOptions="Start" Clicked="OnBackButtonClicked" Grid.Row="0" />
+        <Label x:Name="testo" Text="TEST"/>
         <StackLayout VerticalOptions="FillAndExpand" Grid.Row="1">
-            <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center"
-                  Margin="0,0,0,50" />
-            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand"
-                         HorizontalOptions="Center" Margin="10" />
+            <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" Margin="0,0,0,50" />
+            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10" />
         </StackLayout>
 
-        <Button Text="Confirm" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1" />
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1">
+            <Button Text="Confirm" HorizontalOptions="Center" VerticalOptions="Center" Clicked ="OnConfirm"/>
+            <Button Text="Change Letter" HorizontalOptions="Center" VerticalOptions="Center" Clicked="OnChangeLetterClicked" />
+        </StackLayout>
 
         <Label x:Name="MessageLabel" HorizontalOptions="Center" VerticalOptions="End" Margin="10" Grid.Row="2" />
     </Grid>
