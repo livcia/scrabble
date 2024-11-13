@@ -12,7 +12,9 @@
         </Grid.RowDefinitions>
 
         <Button Text="Back" HorizontalOptions="End" VerticalOptions="Start" Clicked="OnBackButtonClicked" Grid.Row="0" />
-        <Label x:Name="testo" Text="TEST"/>
+        <Label Grid.Row="0" x:Name="testo" Text="TEST"/>
+        <Label Grid.Row="1" x:Name="PointsLabel" Text="Punkty: 0" FontSize="24" />
+        <Label Grid.Row="2" x:Name="Left" Text="Pozostalo: 100" FontSize="24" />
         <StackLayout VerticalOptions="FillAndExpand" Grid.Row="1">
             <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" Margin="0,0,0,50" />
             <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10" />
