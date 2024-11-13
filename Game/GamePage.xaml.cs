@@ -160,6 +160,7 @@ public partial class GamePage : ContentPage
     private async void OnConfirm(object sender, EventArgs e)
     {
         var selectedLettersString = GetSelectedLettersString();
+        LoadingImage.IsVisible = true;
         var isWord = await gameLogic.IsWordAsync(selectedLettersString);
         if (isWord)
         {
@@ -175,6 +176,7 @@ public partial class GamePage : ContentPage
         {
             testo.Text = $"NIE znalazlo slowa: {selectedLettersString}";
         }
+        LoadingImage.IsVisible = false;
     }
 
     private void ClearSelectedLetters()
