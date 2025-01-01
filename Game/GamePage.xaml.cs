@@ -19,7 +19,55 @@ public partial class GamePage : ContentPage
         gameLogic = new GameLogic.GameLogic(letters);
         var totalTiles = GetTotalTiles();
         DisplayUserLetters();
+        CreateScrabbleBoard();
     }
+private void CreateScrabbleBoard()
+{
+    for (int row = 0; row < 15; row++)
+    {
+        for (int col = 0; col < 15; col++)
+        {
+            var frame = new Frame
+            {
+                BorderColor = Colors.Black,
+                BackgroundColor = Colors.LightGray,
+                WidthRequest = 30,
+                HeightRequest = 30,
+                HasShadow = false
+            };
+
+            // Add pointer event handlers
+            var pointerEnteredRecognizer = new PointerGestureRecognizer();
+            pointerEnteredRecognizer.PointerEntered += OnPointerEntered;
+            frame.GestureRecognizers.Add(pointerEnteredRecognizer);
+
+            var pointerExitedRecognizer = new PointerGestureRecognizer();
+            pointerExitedRecognizer.PointerExited += OnPointerExited;
+            frame.GestureRecognizers.Add(pointerExitedRecognizer);
+
+            ScrabbleBoard.Children.Add(frame);
+            Grid.SetRow(frame, row);
+            Grid.SetColumn(frame, col);
+        }
+    }
+}
+
+private void OnPointerEntered(object sender, PointerEventArgs e)
+{
+    if (sender is Frame frame)
+    {
+        frame.BackgroundColor = Colors.Blue;
+    }
+}
+
+private void OnPointerExited(object sender, PointerEventArgs e)
+{
+    if (sender is Frame frame)
+    {
+        frame.BackgroundColor = Colors.LightGray;
+    }
+}
+
 
     private int GetTotalTiles()
     {
@@ -160,23 +208,15 @@ public partial class GamePage : ContentPage
     private async void OnConfirm(object sender, EventArgs e)
     {
         var selectedLettersString = GetSelectedLettersString();
-        LoadingImage.IsVisible = true;
         var isWord = await gameLogic.IsWordAsync(selectedLettersString);
         if (isWord)
         {
-            testo.Text = $"znalazlo slowo: {selectedLettersString}";
             totalPoints += selectedLettersString.Sum(c => gameLogic.GetPointsForCharacter(c));
-            PointsLabel.Text = $"Punkty: {totalPoints}";
             ClearSelectedLetters();
             userLetters = LetterInitializer.DrawRandomLetters(letters, selectedLettersString.Length);
             DisplayUserLetters();
             Left.Text = "Pozostało liter: " + GetTotalTiles();
         }
-        else
-        {
-            testo.Text = $"NIE znalazlo slowa: {selectedLettersString}";
-        }
-        LoadingImage.IsVisible = false;
     }
 
     private void ClearSelectedLetters()

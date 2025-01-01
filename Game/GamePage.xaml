@@ -1,32 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="randomWordGenerator.Game.GamePage">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <VerticalStackLayout HorizontalOptions="Center">
+        <HorizontalStackLayout>
+            <Grid x:Name="ScrabbleBoard" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+            </Grid>
 
-        <Button Text="Back" HorizontalOptions="End" VerticalOptions="Start" Clicked="OnBackButtonClicked" Grid.Row="0" />
-        <Label Grid.Row="0" x:Name="testo" Text="TEST"/>
-        <Label Grid.Row="1" x:Name="PointsLabel" Text="Punkty: 0" FontSize="24" />
-        <Label Grid.Row="2" x:Name="Left" Text="Pozostalo: 100" FontSize="24" />
-        <StackLayout VerticalOptions="FillAndExpand" Grid.Row="1">
-            <Grid x:Name="SelectedLettersGrid" VerticalOptions="CenterAndExpand" HorizontalOptions="Center" Margin="0,0,0,50" />
-            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10" />
-            <Image x:Name="LoadingImage" Source="loading.gif" IsVisible="False" HorizontalOptions="Center" VerticalOptions="Center" WidthRequest="100" HeightRequest="100"/>
-        </StackLayout>
+           <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="End" Margin="10">
+                <Button Text="Restart" Margin="20"/>
+                <Button Text="Back to Menu" Margin="20" Clicked="OnBackButtonClicked" />
+                <Button x:Name="xd" Text="Change Letter" Margin="20"/>
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
 
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="1">
-            <Button Text="Confirm" HorizontalOptions="Center" VerticalOptions="Center" Clicked ="OnConfirm"/>
-            <Button Text="Change Letter" HorizontalOptions="Center" VerticalOptions="Center" Clicked="OnChangeLetterClicked" />
-        </StackLayout>
+        <HorizontalStackLayout VerticalOptions="EndAndExpand" HorizontalOptions="Start" Margin="10">
+            <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10"></StackLayout>
 
-        <Label x:Name="MessageLabel" HorizontalOptions="Center" VerticalOptions="End" Margin="10" Grid.Row="2" />
-    </Grid>
+            <StackLayout/>
 
+            <Grid x:Name="SelectedLettersGrid" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10"/>
+
+           <Label x:Name="Left" Text="Pozostało liter w puli: 100" FontSize="24" VerticalOptions="Center" HorizontalOptions="End" Margin="10" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
 </ContentPage>
