@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
 
 namespace randomWordGenerator.Game;
 
@@ -8,81 +8,57 @@ public partial class GamePage : ContentPage
     private readonly List<Letter> letters;
     private List<Letter> userLetters;
     private bool czyUsuwanie;
-    private int selectedLetterCount;
     private int totalPoints;
+    private Button? currentlySelectedButton;
+    private ScrabbleBoard scrabbleBoard;
 
     public GamePage()
     {
         InitializeComponent();
+
         letters = LetterInitializer.InitializeLetters();
         userLetters = LetterInitializer.DrawRandomLetters(letters, 7);
         gameLogic = new GameLogic.GameLogic(letters);
-        var totalTiles = GetTotalTiles();
         DisplayUserLetters();
-        CreateScrabbleBoard();
-    }
-private void CreateScrabbleBoard()
-{
-    for (int row = 0; row < 15; row++)
-    {
-        for (int col = 0; col < 15; col++)
-        {
-            var frame = new Frame
-            {
-                BorderColor = Colors.Black,
-                BackgroundColor = Colors.LightGray,
-                WidthRequest = 30,
-                HeightRequest = 30,
-                HasShadow = false
-            };
-
-            // Add pointer event handlers
-            var pointerEnteredRecognizer = new PointerGestureRecognizer();
-            pointerEnteredRecognizer.PointerEntered += OnPointerEntered;
-            frame.GestureRecognizers.Add(pointerEnteredRecognizer);
-
-            var pointerExitedRecognizer = new PointerGestureRecognizer();
-            pointerExitedRecognizer.PointerExited += OnPointerExited;
-            frame.GestureRecognizers.Add(pointerExitedRecognizer);
-
-            ScrabbleBoard.Children.Add(frame);
-            Grid.SetRow(frame, row);
-            Grid.SetColumn(frame, col);
-        }
-    }
-}
-
-private void OnPointerEntered(object sender, PointerEventArgs e)
-{
-    if (sender is Frame frame)
-    {
-        frame.BackgroundColor = Colors.Blue;
-    }
-}
-
-private void OnPointerExited(object sender, PointerEventArgs e)
-{
-    if (sender is Frame frame)
-    {
-        frame.BackgroundColor = Colors.LightGray;
-    }
-}
-
-
-    private int GetTotalTiles()
-    {
-        return letters.Sum(letter => letter.Quantity);
+        scrabbleBoard = new ScrabbleBoard();
+        scrabbleBoard.ClearChoosenLetterRequested += OnClearChoosenLetterRequested;
+        ScrabbleBoardContainer.Children.Add(scrabbleBoard.BoardGrid);
     }
 
     private void DisplayUserLetters()
     {
-        //LettersStackLayout.Children.Clear();
         foreach (var letter in userLetters)
         {
             var button = CreateLetterButton(letter.Character);
             button.Clicked += OnLetterButtonClicked;
             LettersStackLayout.Children.Add(button);
         }
+    }
+
+    private void OnLetterButtonClicked(object sender, EventArgs e)
+    {
+        if (sender is Button button)
+        {
+            scrabbleBoard.LetterToPut = button.Text;
+            LettersStackLayout.Children.Remove(button);
+
+            if (ChoosenLetter.Children.Count > 0)
+            {
+                var previousButton = ChoosenLetter.Children[0] as Button;
+                if (previousButton != null)
+                {
+                    ChoosenLetter.Children.Remove(previousButton);
+                    LettersStackLayout.Children.Add(previousButton);
+                }
+            }
+
+            ChoosenLetter.Children.Add(button);
+        }
+    }
+
+    private void OnClearChoosenLetterRequested(object sender, EventArgs e)
+    {
+        ChoosenLetter.Children.Clear();
     }
 
     private Button CreateLetterButton(char character)
@@ -95,141 +71,5 @@ private void OnPointerExited(object sender, PointerEventArgs e)
             HeightRequest = 50,
             Margin = new Thickness(5)
         };
-    }
-
-    private async void OnLetterButtonClicked(object? sender, EventArgs e)
-    {
-        if (sender is Button button)
-        {
-            if (!czyUsuwanie)
-            {
-                MoveButtonToSelectedLetters(button);
-                await AnimateButton(button, 0, -50);
-                button.Clicked -= OnLetterButtonClicked;
-                button.Clicked += OnSelectedLetterButtonClicked;
-            }
-            else
-            {
-                ReplaceLetter(button);
-                czyUsuwanie = false;
-            }
-        }
-    }
-
-    private async void OnSelectedLetterButtonClicked(object? sender, EventArgs e)
-    {
-        if (sender is Button button)
-        {
-            if (!czyUsuwanie)
-            {
-                MoveButtonToUserLetters(button);
-                await AnimateButton(button, 0, 0);
-                button.Clicked -= OnSelectedLetterButtonClicked;
-                button.Clicked += OnLetterButtonClicked;
-            }
-            else
-            {
-                ReplaceLetter(button);
-                czyUsuwanie = false;
-            }
-        }
-    }
-
-    private void MoveButtonToSelectedLetters(Button button)
-    {
-        LettersStackLayout.Children.Remove(button);
-        SelectedLettersGrid.Children.Add(button);
-        SelectedLettersGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        Grid.SetColumn(button, selectedLetterCount);
-        selectedLetterCount++;
-    }
-
-    private void MoveButtonToUserLetters(Button button)
-    {
-        var columnIndex = Grid.GetColumn(button);
-        SelectedLettersGrid.Children.Remove(button);
-        LettersStackLayout.Children.Add(button);
-        SelectedLettersGrid.ColumnDefinitions.RemoveAt(columnIndex);
-
-        foreach (var child in SelectedLettersGrid.Children)
-        {
-            var currentColumn = Grid.GetColumn((BindableObject)child);
-            if (currentColumn > columnIndex) Grid.SetColumn((BindableObject)child, currentColumn - 1);
-        }
-
-        selectedLetterCount--;
-    }
-
-    private void ReplaceLetter(Button button)
-    {
-        LettersStackLayout.Children.Remove(button);
-        var newButton = gameLogic.ExchangeLetter(button.Text[0]);
-        LettersStackLayout.Children.Add(newButton);
-        newButton.Clicked += OnLetterButtonClicked;
-    }
-
-    private async Task AnimateButton(Button button, double x, double y)
-    {
-        await button.TranslateTo(x, y, 250, Easing.CubicInOut);
-    }
-
-    private async void OnBackButtonClicked(object sender, EventArgs e)
-    {
-        await Navigation.PopAsync();
-    }
-
-    private async void OnChangeLetterClicked(object sender, EventArgs e)
-    {
-        var buttonsToMove = SelectedLettersGrid.Children.ToList();
-        foreach (var view in buttonsToMove)
-        {
-            var button = (Button)view;
-            await AnimateButton(button, 0, 0);
-            SelectedLettersGrid.Children.Remove(button);
-            LettersStackLayout.Children.Add(button);
-            button.Clicked -= OnSelectedLetterButtonClicked;
-            button.Clicked += OnLetterButtonClicked;
-            gameLogic.AddLetterBackToList(button.Text[0]);
-        }
-        SelectedLettersGrid.ColumnDefinitions.Clear();
-        selectedLetterCount = 0;
-        czyUsuwanie = true;
-    }
-
-    private string GetSelectedLettersString()
-    {
-        var selectedLetters = new StringBuilder();
-        foreach (var child in SelectedLettersGrid.Children)
-            if (child is Button button)
-                selectedLetters.Append(button.Text);
-        return selectedLetters.ToString();
-    }
-
-    private async void OnConfirm(object sender, EventArgs e)
-    {
-        var selectedLettersString = GetSelectedLettersString();
-        var isWord = await gameLogic.IsWordAsync(selectedLettersString);
-        if (isWord)
-        {
-            totalPoints += selectedLettersString.Sum(c => gameLogic.GetPointsForCharacter(c));
-            ClearSelectedLetters();
-            userLetters = LetterInitializer.DrawRandomLetters(letters, selectedLettersString.Length);
-            DisplayUserLetters();
-            Left.Text = "Pozostało liter: " + GetTotalTiles();
-        }
-    }
-
-    private void ClearSelectedLetters()
-    {
-        var buttonsToMove = SelectedLettersGrid.Children.ToList();
-        foreach (var view in buttonsToMove)
-        {
-            if (view is Button button)
-            {
-                SelectedLettersGrid.Children.Remove(button);
-            }
-        }
-        SelectedLettersGrid.ColumnDefinitions.Clear();
-        selectedLetterCount = 0;
     }
 }

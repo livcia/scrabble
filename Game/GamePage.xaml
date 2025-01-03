@@ -5,47 +5,14 @@
 
     <VerticalStackLayout HorizontalOptions="Center">
         <HorizontalStackLayout>
-            <Grid x:Name="ScrabbleBoard" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Margin="10">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-            </Grid>
+            <Grid x:Name="ScrabbleBoardContainer" Grid.Row="1" />
 
-           <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="End" Margin="10">
+
+            <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="End" Margin="10">
                 <Button Text="Restart" Margin="20"/>
-                <Button Text="Back to Menu" Margin="20" Clicked="OnBackButtonClicked" />
+                <Button Text="Back to Menu" Margin="20"/>
                 <Button x:Name="xd" Text="Change Letter" Margin="20"/>
+                <StackLayout x:Name="ChoosenLetter"/>
             </VerticalStackLayout>
         </HorizontalStackLayout>
 
@@ -53,9 +20,6 @@
             <StackLayout x:Name="LettersStackLayout" Orientation="Horizontal" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10"></StackLayout>
 
             <StackLayout/>
-
-            <Grid x:Name="SelectedLettersGrid" VerticalOptions="EndAndExpand" HorizontalOptions="Center" Margin="10"/>
-
            <Label x:Name="Left" Text="Pozostało liter w puli: 100" FontSize="24" VerticalOptions="Center" HorizontalOptions="End" Margin="10" />
         </HorizontalStackLayout>
     </VerticalStackLayout>
